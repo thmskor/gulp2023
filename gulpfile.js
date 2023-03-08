@@ -1,10 +1,11 @@
-const { src, dest, watch, parallel } = require('gulp');
+const { src, dest, watch, parallel, series } = require('gulp');
 
 const scss = require('gulp-sass')(require('sass'));
 const concat = require('gulp-concat');
 const uglify = require('gulp-uglify-es').default;
 const browserSync = require('browser-sync').create();
 const autoprefixer = require('gulp-autoprefixer');
+const clean = require('gulp-clean');
 
 
 function scripts() {
@@ -16,7 +17,7 @@ function scripts() {
 
     'src/js/*.js',
     '!app/js/app.min.js'
-    
+
     */
   ])
   .pipe(concat('app.min.js'))
@@ -48,9 +49,24 @@ function browsersync() {
   });
 }
 
+function cleanDist(){
+  return src('dist')
+  .pipe(clean())
+}
+
+function building() {
+  return src([
+    'src/css/app.min.css',
+    'src/js/app.min.js',
+    'src/**/*.html'
+  ], { base : 'src' })
+  .pipe(dest('dist'))
+}
+
 exports.styles = styles;
 exports.scripts = scripts;
 exports.watching = watching;
 exports.browsersync = browsersync;
 
+exports.build = series(cleanDist, building);
 exports.default = parallel(styles, scripts, browsersync, watching);
