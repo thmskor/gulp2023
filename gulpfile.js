@@ -8,8 +8,18 @@ const autoprefixer = require('gulp-autoprefixer');
 
 
 function scripts() {
-  return src('src/js/app.js')
-  .pipe(concat('app.main.js'))
+  return src([
+    'node_modules/swiper/swiper-bundle.js',
+    'src/js/app.js',
+
+    /* Get All JS FIles except app.min.js
+
+    'src/js/*.js',
+    '!app/js/app.min.js'
+    
+    */
+  ])
+  .pipe(concat('app.min.js'))
   .pipe(uglify())
   .pipe(dest('src/js'))
   .pipe(browserSync.stream())
